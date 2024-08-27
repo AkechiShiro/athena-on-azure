@@ -20,12 +20,6 @@ fi
 # HELPERS                                          #
 ####################################################
 
-assign_role() {
-  az role assignment create      \
-    --assignee "${principal_id}" \
-    --role "Owner"               \
-    --scope "${group_id}"
-}
 
 usage() {
   echo ''
@@ -125,47 +119,11 @@ then
     --location "${location_d}"
 fi
 
-if ! az identity show --name "${resource_group}-identity" --resource-group "${resource_group}" &>/dev/stderr
-then
-  az identity create                    \
-    --name "${resource_group}-identity" \
-    --resource-group "${resource_group}"
-fi
-
-principal_id="$(
-  az identity show                       \
-    --name "${resource_group}-identity"  \
-    --resource-group "${resource_group}" \
-    --output tsv --query "[principalId]"
-)"
-
-group_id="$(
-  az group show                \
-    --name "${resource_group}" \
-    --output tsv               \
-    --query "[id]"
-)"
-
-until assign_role;
-do
-  echo "Retrying role assignment..."
-  sleep 1
-done
-
-echo "Role assignment successful"
-
-identity_id="$(
-  az identity show                       \
-    --name "${resource_group}-identity"  \
-    --resource-group "${resource_group}" \
-    --output tsv --query "[id]"
-  )"
 
 # boot vm
 az vm create                           \
   --name "${vm_name}"                  \
   --resource-group "${resource_group}" \
-  --assign-identity "${identity_id}"   \
   --size "${vm_size_d}"                \
   --os-disk-size-gb "${os_size_d}"     \
   --image "${img_id}"                  \
