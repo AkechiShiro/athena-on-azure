@@ -5,31 +5,10 @@
   outputs = { nixos, ... }:
     let
       username = "athena-azure";
-      desktop = "gnome";
-      dmanager = "gdm";
       system = "x86_64-linux";
       pkgs = import nixos { inherit system; config.allowUnfree = true; };
     in
     {
-       "runtime" = mkSystem [
-          "/etc/nixos/hardware-configuration.nix"
-          (import ./common.nix {inherit username;})
-          home-manager.nixosModules.home-manager
-          ./.
-          {
-          athena = {
-            inherit bootloader terminal theme mainShell browser;
-            enable = true;
-            baseConfiguration = true;
-            baseSoftware = true;
-            baseLocale = true;
-            homeManagerUser = username;
-            desktopManager = desktop;
-            displayManager = dmanager;
-          };
-          }
-        ];
-
       packages.${system}.azure-image =
         let
           img = nixos.lib.nixosSystem {
