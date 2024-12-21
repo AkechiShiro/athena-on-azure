@@ -1,11 +1,12 @@
 {
-  inputs.nixos.url = "github:nixos/nixpkgs/nixos-24.05";
+  inputs.nixos.url = "github:codgician/nixpkgs/fix-azure-modules";
+
 
   outputs = { nixos, ... }:
     let
-      username = "rudesome";
+      username = "athena-azure";
       system = "x86_64-linux";
-      pkgs = import nixos { inherit system; };
+      pkgs = import nixos { inherit system; config.allowUnfree = true; };
     in
     {
       packages.${system}.azure-image =
@@ -15,6 +16,7 @@
 
             modules = [
               ./image.nix
+	            ./.
               (import ./common.nix { inherit username; })
             ];
           };

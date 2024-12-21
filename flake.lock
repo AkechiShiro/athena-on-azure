@@ -2,16 +2,16 @@
   "nodes": {
     "nixos": {
       "locked": {
-        "lastModified": 1718208800,
-        "narHash": "sha256-US1tAChvPxT52RV8GksWZS415tTS7PV42KTc2PNDBmc=",
-        "owner": "nixos",
+        "lastModified": 1734697074,
+        "narHash": "sha256-py7TIRTTymzMNOg9m9A/CbPDo20NsjwGFLh/bbwK0bM=",
+        "owner": "codgician",
         "repo": "nixpkgs",
-        "rev": "cc54fb41d13736e92229c21627ea4f22199fee6b",
+        "rev": "67e4045c0656c4e996b2375b59808b03e0310131",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "nixos-24.05",
+        "owner": "codgician",
+        "ref": "fix-azure-modules",
         "repo": "nixpkgs",
         "type": "github"
       }

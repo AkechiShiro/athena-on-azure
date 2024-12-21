@@ -105,7 +105,7 @@ fi
 # DEFAULTS                                         #
 ####################################################
 
-location_d="${location:-"westeurope"}"
+location_d="${location:-"uksouth"}"
 os_size_d="${os_size:-"42"}"
 vm_size_d="${vm_size:-"Standard_DS1_v2"}"
 

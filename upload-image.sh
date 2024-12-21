@@ -88,7 +88,7 @@ fi
 # DEFAULTS                                         #
 ####################################################
 
-location_d="${location:-"westeurope"}"
+location_d="${location:-"uksouth"}"
 
 ####################################################
 # PUT IMAGE INTO AZURE CLOUD                       #
