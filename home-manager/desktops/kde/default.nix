@@ -2,7 +2,6 @@
 let
   plasma-packages = with pkgs.libsForQt5; [
     bluez-qt
-    discover
     dolphin
     elisa
     gwenview
@@ -36,29 +35,30 @@ let
 in {
   config = lib.mkIf (config.athena.desktopManager == "kde") {
     # ---- System Configuration ----
+
+   services.desktopManager.plasma6 = {
+     enable = true;
+      #kwinrc = {
+      #  "Plugins" = {
+      #    blurEnabled = true;
+      #    contrastEnabled = true;
+      #    diminactiveEnabled = true;
+      #    forceblurEnabled = true;
+      #    invertEnabled = true;
+      #    magiclampEnabled = true;
+      #    slidebackEnabled = true;
+      #    wobblywindowsEnabled = true;
+      #  };
+
+      #  "org.kde.kdecoration2" = {
+      #    BorderSize = "None";
+      #    BorderSizeAuto = false;
+      #    ButtonsOnLeft = "XIA";
+      #  };
+      #};
+   };
     services.xserver = {
       enable = true;
-      desktopManager.plasma5 = {
-        enable = true;
-        kwinrc = {
-          "Plugins" = {
-            blurEnabled = true;
-            contrastEnabled = true;
-            diminactiveEnabled = true;
-            forceblurEnabled = true;
-            invertEnabled = true;
-            magiclampEnabled = true;
-            slidebackEnabled = true;
-            wobblywindowsEnabled = true;
-          };
-
-          "org.kde.kdecoration2" = {
-            BorderSize = "None";
-            BorderSizeAuto = false;
-            ButtonsOnLeft = "XIA";
-          };
-        };
-      };
     };
 
     environment = {

@@ -11,11 +11,12 @@
   ...
 }:
 let
+  diskSize = 15*1024;
   # These variable names are used by Aegis backend
-  version = "unstable"; # or 24.05
+  version = "unstable"; # or 24.11
   username = "athena";
-  hashed = "$6$JCSoBNUqffP/wMhL$8BB2qj58olM/InfvtmZA4Wi84j4MFvxCQwGptG849dind0BJ5jEd3orqpPZTB0bPZeyyFRAURCC3IRKYRfaMd.";
-  hashedRoot = "$6$JCSoBNUqffP/wMhL$8BB2qj58olM/InfvtmZA4Wi84j4MFvxCQwGptG849dind0BJ5jEd3orqpPZTB0bPZeyyFRAURCC3IRKYRfaMd.";
+  hashed = "$6$zjvJDfGSC93t8SIW$AHhNB.vDDPMoiZEG3Mv6UYvgUY6eya2UY5E2XA1lF7mOg6nHXUaaBmJYAMMQhvQcA54HJSLdkJ/zdy8UKX3xL1";
+  hashedRoot = "$6$zjvJDfGSC93t8SIW$AHhNB.vDDPMoiZEG3Mv6UYvgUY6eya2UY5E2XA1lF7mOg6nHXUaaBmJYAMMQhvQcA54HJSLdkJ/zdy8UKX3xL1";
   hostname = "athenaos";
   theme = "temple";
   desktop = "gnome";
@@ -24,7 +25,7 @@ let
   terminal = "kitty";
   browser = "firefox";
   bootloader = if builtins.pathExists "/sys/firmware/efi" then "systemd" else "grub";
-  hm-version = if version == "unstable" then "master" else "release-" version; # "master" or "release-24.05"; # Correspond to home-manager GitHub branches
+  hm-version = if version == "unstable" then "master" else "release-${version}"; # "master" or "release-24.11"; # Correspond to home-manager GitHub branches
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/${hm-version}.tar.gz";
   openssh-key = builtins.readFile /home/kenshin/.ssh/id_ed25519_dev.pub;
 in
@@ -50,8 +51,8 @@ in
       };
     }
     (import "${home-manager}/nixos")
-    #./.
-    "${modulesPath}/virtualisation/azure-common.nix"
+    ./.
+    "${modulesPath}/virtualisation/azure-image.nix"
   ];
 
   users = lib.mkIf config.athena.enable {
@@ -71,32 +72,43 @@ in
     };
   };
 
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.growPartition = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking = {
-    networkmanager.enable = lib.mkForce false;
-    useDHCP = false;
     # Important for Azure
     useNetworkd = true;
     hostName = "${hostname}";
-    enableIPv6 = false;
+    enableIPv6 = true;
   };
+
+  # Enable zram swap
+  zramSwap.enable = true;
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-label/ESP";
     fsType = "vfat";
   };
 
-  #virtualisation.azure.agent.enable = true;
+  nix.settings.trusted-users = [ "root" "@wheel" ];
   # Azure image
-  virtualisation.diskSize = 16 * 1024;
+  services.waagent = { 
+    enable = true;
+    # Doesn't work properly at the moment
+    settings = {
+      Provisioning.Enable = true;
+      Agent = "waagent";
+      AutoUpdate.Enable = true;
+    };
+  };
+  virtualisation.diskSize = diskSize;
   virtualisation.azureImage.vmGeneration = "v2";
   virtualisation.azure.acceleratedNetworking = true;
 
-  image.fileName = "nixos.vhd";
+  image.fileName = "disk.vhd";
 
   services = {
     openssh = {
@@ -104,17 +116,26 @@ in
       openFirewall = true;
     };
     flatpak.enable = false;
-    cloud-init.network.enable = true;
-    xrdp { 
+
+    # Let Waagent provision ssh key and username from Azure API during VM creation
+
+    xrdp = { 
+      enable = true;
+      # gnome: gnome-session
+      # kde Plasma : start-plasmawayland doesn't work
+      # extend with mkIf config
       defaultWindowManager = "gnome-session";
       openFirewall = true;
     };
   };
+
   systemd.services.cloud-config.serviceConfig = {
     Restart = "on-failure";
   };
 
   security.sudo.wheelNeedsPassword = false;
+  # Workaround needed for runScriptShell on Azure Portal
+  programs.nix-ld.enable = true;
 
   cyber = {
     enable = false;

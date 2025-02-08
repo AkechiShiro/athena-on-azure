@@ -5,6 +5,7 @@ let
     bat
     bfetch
     bind
+    clang
     cmatrix
     cowsay
     cyberchef
@@ -14,6 +15,7 @@ let
     ghex
     glxinfo
     gparted
+    gnumake
     htb-toolkit
     hw-probe
     imagemagick

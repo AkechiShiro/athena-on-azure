@@ -1,12 +1,11 @@
 {
-  inputs.nixos.url = "github:codgician/nixpkgs/fix-azure-modules";
-
+  inputs.nixos.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
   outputs = { nixos, ... }:
     let
-      username = "athena-azure";
+      username = "athena";
       system = "x86_64-linux";
-      pkgs = import nixos { inherit system; config.allowUnfree = true; };
+      pkgs = import nixos { inherit system; };
     in
     {
       packages.${system}.azure-image =
@@ -16,20 +15,6 @@
 
             modules = [
               ./image.nix
-	            ./.
-              (import ./common.nix { inherit username; })
-            ];
-          };
-        in
-        img.config.system.build.azureImage;
-      packages.${system}.azure-image =
-        let
-          img = nixos.lib.nixosSystem {
-            inherit pkgs system;
-
-            modules = [
-              ./image.nix
-	            ./.
               (import ./common.nix { inherit username; })
             ];
           };
@@ -62,4 +47,3 @@
           };
     };
 }
-

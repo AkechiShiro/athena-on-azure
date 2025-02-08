@@ -3,7 +3,7 @@
 with pkgs;
 
 [
-  acquire
+  #acquire
   aesfix
   aeskeyfind
   afflib
@@ -14,7 +14,7 @@ with pkgs;
   chkrootkit
   chntpw
   dc3dd
-  dcfldd
+  #dcfldd
   ddrescue
   dmg2img
   exiftool
@@ -28,7 +28,7 @@ with pkgs;
   mac-robber
   mdbtools
   ms-sys
-  networkminer
+  #networkminer
   ntfs3g
   oletools
   osquery
@@ -41,10 +41,10 @@ with pkgs;
   safecopy
   scalpel
   sleuthkit
-  snort
+  #snort
   tell-me-your-secrets
   testdisk
-  tracee
+  #tracee
   usbrip
   volatility3
 ]
